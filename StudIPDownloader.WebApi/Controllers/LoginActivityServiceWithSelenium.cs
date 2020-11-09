@@ -18,12 +18,12 @@ namespace StudIPDownloader.WebApi.Controllers
             this.logger = logger;
         }
 
-        public async Task<string> Login(string username, string password, string url)
+        public async Task<string> Login(string username,  string password, string url)
         {
             Console.WriteLine($"Directory: {Directory.GetCurrentDirectory()}");
             var firefoxOptions = new FirefoxOptions();
             firefoxOptions.AddArgument("-headless");
-            IWebDriver driver = new FirefoxDriver(firefoxOptions);
+            using IWebDriver driver = new FirefoxDriver(firefoxOptions);
             driver.Navigate().GoToUrl(url);
 
             driver.FindElement(By.ClassName("login_link")).FindElement(By.XPath(".//*")).Click();
@@ -51,6 +51,7 @@ namespace StudIPDownloader.WebApi.Controllers
 
 
             var cookies = driver.Manage().Cookies.AllCookies.Where(x => x.Name.Equals("Seminar_Session")).ToList();
+            driver.Quit();
             return cookies.Last().Value;
         }
     }
